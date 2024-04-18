@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import time
 import io
 import sys
@@ -9,6 +8,10 @@ import binascii
 import usb.core
 import usb.util
 from PIL import Image
+import usb.backend.libusb1
+
+
+backend = usb.backend.libusb1.get_backend(find_library=lambda x: "/usr/local/lib/libedgetpu.1.0.dylib")
 
 lbls = open("imagenet_labels.txt").read().strip().split("\n")
 lbls = [x[6:] for x in lbls]
@@ -107,7 +110,7 @@ def csend(dev, off, ll, num):
   assert(off2 == -1)
   llsend(dev, et[off:off+ll], num, off)
 
-dev = usb.core.find(idVendor=0x18d1, idProduct=0x9302)
+dev = usb.core.find(idVendor=0x18d1, idProduct=0x9302, backend=backend)
 if dev is None:
   # download firmware
   dev = usb.core.find(idVendor=0x1a6e, idProduct=0x089a)
